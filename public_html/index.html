@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html dir="ltr">
+
+<head>
+  <meta charset="utf-8">
+  <title>botn't</title>
+  <script src="https://code.jquery.com/jquery-3.5.1.min.js" charset="utf-8"></script>
+</head>
+
+<body>
+  <form action="/send" method="POST" target="_blank">
+    <p>message: <input type="text" id="msg" name="msg" value="hello"></p>
+    <p>server: <select id="server" name="server"></select></p>
+    <p>channel: <select id="channel" name="channel"></select></p>
+	<p>colour: <input name="col" id="col" type="color" value="#c5044c"></input></p>
+	<p>embed: <input type="checkbox" id="embed" name="embed" checked="on"></input></p>
+    <input type="submit" method="POST" formtarget=iframe value="Send">
+	<iframe name=iframe style="height: 1px; width: 1px; border: none;"></iframe>
+  </form>
+  <script>
+    let list;
+    $.getJSON(`/list`, gotList);
+    function gotList(data) {
+      list = data;
+      const servers = Object.keys(data);
+      let serSel = document.getElementById("server");
+      serSel.addEventListener('change', serChange);
+      for (i = 0; i < servers.length; i++) {
+        let tmp = document.createElement("option");
+        tmp.value = servers[i];
+        tmp.innerHTML = servers[i];
+        serSel.appendChild(tmp);
+      }
+      serChange();
+    }
+    function serChange() {
+      const server = $(`#server`).val();
+      const channels = Object.keys(list[server]);
+      let chSel = document.getElementById("channel");
+      chSel.innerHTML = "";
+      for (i = 0; i < channels.length; i++) {
+        if(list[server][channels[i]].type == 'text'){
+          let tmp = document.createElement("option");
+          tmp.value = channels[i];
+          tmp.innerHTML = channels[i];
+          chSel.appendChild(tmp);
+        }
+      }
+    }
+
+  </script>
+</body>
+
+</html>
